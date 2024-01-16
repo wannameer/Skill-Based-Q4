@@ -1,0 +1,18 @@
+# create a TCP socket
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# connect to the server
+client_socket.connect(("192.168.242.128", 8484))
+print("Client connected to the server")
+
+# send a message to the server
+message = "Hello, server!"
+client_socket.send(message.encode())
+print("Client sent a message to the server")
+
+# receive a response from the server
+response = client_socket.recv(1024).decode()
+print("Client received a response from the server:", response)
+
+# close the socket
+client_socket.close()
