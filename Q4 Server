@@ -1,0 +1,45 @@
+import socket
+import threading
+import random
+
+# create a TCP socket
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# bind the socket to the server address and port
+server_socket.bind(("192.168.242.128", 8484))
+
+# listen for incoming connections
+server_socket.listen(5)
+print("Server is listening on port 8484")
+
+# define a list of quotes
+quotes = [
+    "Pain is temporary, regret stays forever. - Lance Armstrong",
+    "Failure is success in progress. - Albert Einstein",
+    "You miss 1oo percent of the shots you never take. - Wayne Gretzku",
+    "The most important thing is to enjoy yor life, to be happy, its all that matters. - Audrey Hepburn",
+    "The only thing we have to fear is fear itself. - Franklin D. Roosevelt"
+]
+
+# define a function that handles the client connection
+def handle_client(client_socket):
+    # receive the request from the client
+    request = client_socket.recv(1024)
+    # if the request is not empty
+    if request:
+        # send a quote of the day to the client
+        quote = random.choice(quotes)
+        client_socket.send(quote.encode())
+        print("Server sent a quote to the client")
+    # close the client socket
+    client_socket.close()
+    print("Server closed the connection")
+
+# in an infinite loop
+while True:
+    # accept a connection from a client
+    client_socket, client_address = server_socket.accept()
+    print("Server accepted a connection from", client_address)
+    # create and start a new thread to handle the client
+    client_thread = threading.Thread(target=handle_client, args=(client_socket,))
+    client_thread.start()
